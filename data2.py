@@ -13,11 +13,15 @@ print("DUPLICATES IN SAMPLE")
 print(data2.duplicated().sum())
 print(data2.drop_duplicates(inplace=True))
 
-for col in data2.select_dtypes(include='object').columns:
-    data2[col]=data2[col].fillna('Unknown')
-
 for col in data2.select_dtypes(include=['float64', 'int64']).columns:
-    data2[col]=data2[col].fillna(0)
+    median_val = data2[col].median()
+    data2[col] = data2[col].fillna(median_val)
+
+for col in data2.select_dtypes(include=['object', 'string']).columns:
+    if not data2[col].mode().empty:
+        mode_val = data2[col].mode()[0]
+        data2[col] = data2[col].fillna(mode_val)
+
 print('\nMissing values in data2 after cleaning:')
 print(data2.isnull().sum())
 print('\nDuplicates in data2 after cleaning:')
@@ -45,11 +49,14 @@ print(filtered.head())
 
 print(filtered.isnull().sum())
 
-for col in filtered.select_dtypes(include='object').columns:
-    filtered[col]=filtered[col].fillna('Unknown')
-
 for col in filtered.select_dtypes(include=['float64', 'int64']).columns:
-    filtered[col]=filtered[col].fillna(0)
+    median_val = filtered[col].median()
+    filtered[col] = filtered[col].fillna(median_val)
+
+for col in filtered.select_dtypes(include=['object', 'string']).columns:
+    if not filtered[col].mode().empty:
+        mode_val = filtered[col].mode()[0]
+        filtered[col] = filtered[col].fillna(mode_val)
 
 print(filtered.isnull().sum())
 
@@ -87,5 +94,8 @@ print(filtered['Latest water withdrawal data'].describe())
 cross_tab = pd.crosstab(filtered['Region'], filtered['Income Group'])
 print(cross_tab)
 
+data2.to_csv("C:/Users/SARAN K/OneDrive/Desktop/streamlit/data2.csv", index=False)
+
+print("✅ Cleaned data saved successfully at C:/Users/SARAN K/OneDrive/Desktop/streamlit/data2.csv")
 
 
